@@ -8,16 +8,18 @@ defmodule Cospex.ViewHelpers do
   use Phoenix.HTML
   alias Phoenix.Controller
 
-  def script_tag(conn, path, integrity \\ nil) do
-    path = Controller.endpoint_module(conn).static_path(path)
+  def script_tag(conn, path, integrity \\ :lookup) do
+    {path, cached_integrity} = Controller.endpoint_module(conn).static_path(path)
+    integrity = use_integrity(integrity, cached_integrity)
     nonce = conn.assigns[:cospex_nonce]
     ~E"""
       <script src="<%= path %>" type="text/javascript"<%= nonce_attr(nonce) %><%= sri_attr(integrity) %>></script>
     """
   end
 
-  def style_tag(conn, path, integrity \\ nil) do
-    path = Controller.endpoint_module(conn).static_path(path)
+  def style_tag(conn, path, integrity \\ :lookup) do
+    {path, cached_integrity} = Controller.endpoint_module(conn).static_lookup(path)
+    integrity = use_integrity(integrity, cached_integrity)
     nonce = conn.assigns[:cospex_nonce]
     IO.inspect %{integrity: integrity}
     ~E"""
@@ -30,4 +32,8 @@ defmodule Cospex.ViewHelpers do
 
   defp sri_attr(_no_integrity = nil), do: ""
   defp sri_attr(integrity), do: raw(" integrity=\"#{integrity}\"")
+
+  defp use_integrity(nil = _specified, _cached), do: nil
+  defp use_integrity(:lookup = _specified, cached), do: "sha512-#{cached}"
+  defp use_integrity(specified, _cached), do: specified
 end
