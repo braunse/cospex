@@ -2,11 +2,11 @@
 
 ## Better Content-Security-Policy for Phoenix apps
 
-Cospex wants to make it easier to use modern 
+Cospex wants to make it easier to use modern
 [Content-Security-Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy)
 in your
 [Phoenix](https://www.phoenixframework.org/)
-applications, including with 
+applications, including with
 [Phoenix Live View](https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.html).
 
 Cospex supports generating a [nonce](https://content-security-policy.com/nonce/) for better security.
